@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Free couples games to spice up your relationship. Dice, spin the wheel, truth or dare, kama sutra cards and more — no signup needed!" />
+  <meta name="theme-color" content="#0c0910" />
+  <title>SpicyPlay — Free Couples Games</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  💰 MONETIZATION — Google AdSense                          ║
+  ║  1. Sign up at https://adsense.google.com                  ║
+  ║  2. Replace YOUR_ADSENSE_ID below with your publisher ID   ║
+  ║  3. Replace YOUR_SLOT_ID with each ad slot ID              ║
+  ║  4. Uncomment the script tag below                         ║
+  ╚══════════════════════════════════════════════════════════════╝
+  -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_ID" crossorigin="anonymous"></script> -->
+
+  <style>
+    /* ─────────────────────────────────────────────
+       DESIGN TOKENS
+    ───────────────────────────────────────────── */
+    :root {
+      --bg:        #0c0910;
+      --bg2:       #130f1a;
+      --surface:   #1c1627;
+      --surface2:  #261e35;
+      --border:    #2e2642;
+      --border2:   #3d3356;
+      --pink:      #ff6b9d;
+      --pink-dim:  rgba(255,107,157,0.15);
+      --gold:      #f5a05a;
+      --gold-dim:  rgba(245,160,90,0.12);
+      --violet:    #9b6eff;
+      --teal:      #3dd9b3;
+      --text:      #f2eaf8;
+      --text2:     #c0aed4;
+      --muted:     #7a6990;
+      --r:         18px;
+      --r-sm:      12px;
+      --shadow:    0 8px 40px rgba(0,0,0,0.5);
+    }
+
+    /* ─────────────────────────────────────────────
+       RESET + BASE
+    ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient glow background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 40%, rgba(155,110,255,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 60% at 85% 20%, rgba(255,107,157,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 70% at 50% 90%, rgba(245,160,90,0.04) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Subtle noise overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app { position: relative; z-index: 1; }
+
+    /* ─────────────────────────────────────────────
+       SCREEN ROUTING
+    ───────────────────────────────────────────── */
+    .screen { display: none; min-height: 100vh; flex-direction: column; }
+    .screen.active { display: flex; animation: screenIn 0.35s ease; }
+
+    @keyframes screenIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─────────────────────────────────────────────
+       HEADER
+    ───────────────────────────────────────────── */
+    .site-header {
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(12,9,16,0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(130deg, var(--pink) 0%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .logo em {
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .logo-tag {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .header-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--teal);
+      background: rgba(61,217,179,0.1);
+      border: 1px solid rgba(61,217,179,0.25);
+      padding: 5px 12px;
+      border-radius: 30px;
+    }
+
+    /* ─────────────────────────────────────────────
+       AD SLOTS  (replace inner content with real AdSense code)
+    ───────────────────────────────────────────── */
+    .ad-wrap { display: flex; justify-content: center; padding: 10px 20px; }
+
+    .ad-slot {
+      background: var(--surface);
+      border: 1px dashed var(--border2);
+      border-radius: var(--r-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--muted);
+    }
+
+    .ad-slot .ad-label {
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+
+    .ad-slot .ad-size {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .ad-leaderboard { width: 100%; max-width: 728px; height: 90px; }
+    .ad-rectangle  { width: 300px; height: 120px; }
+
+    /* Actual AdSense unit — uncomment and paste slot code inside:
+    .adsense-unit { display: block; }
+    */
+
+    /* ─────────────────────────────────────────────
+       HOME — HERO
+    ───────────────────────────────────────────── */
+    .hero {
+      padding: 48px 28px 28px;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(38px, 7vw, 58px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -1px;
+      margin-bottom: 14px;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      font-weight: 600;
+      background: linear-gradient(130deg, var(--pink), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      color: var(--text2);
+      font-weight: 300;
+      line-height: 1.6;
+      max-width: 460px;
+      margin-bottom: 36px;
+    }
+
+    /* ─────────────────────────────────────────────
+       GAMES GRID
+    ───────────────────────────────────────────── */
+    .section-wrap {
+      padding: 0 28px 48px;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .game-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 26px 22px;
+      cursor: pointer;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .game-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--card-accent, rgba(255,107,157,0.1)), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      border-radius: var(--r);
+    }
+
+    .game-card:hover {
+      border-color: var(--card-accent, var(--pink));
+      transform: translateY(-5px);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.45);
+    }
+
+    .game-card:hover::after { opacity: 1; }
+    .game-card:active { transform: translateY(-2px) scale(0.99); }
+
+    .card-icon {
+      font-size: 38px;
+      line-height: 1;
+      margin-bottom: 14px;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+      line-height: 1.2;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 16px;
+    }
+
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--card-accent, var(--pink));
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-cta svg {
+      transition: transform 0.2s;
+      width: 14px;
+      height: 14px;
+    }
+
+    .game-card:hover .card-cta svg { transform: translateX(4px); }
+
+    /* ─────────────────────────────────────────────
+       PROMO STRIP  (affiliate / premium upsell)
+    ───────────────────────────────────────────── */
+    .promo-strip {
+      margin: 0 28px 40px;
+      background: linear-gradient(130deg, #1e1530, #2a1a3e);
+      border: 1px solid #4a3060;
+      border-radius: var(--r);
+      padding: 22px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      max-width: 860px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .promo-text { flex: 1; min-width: 200px; }
+    .promo-text h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .promo-text p { font-size: 13px; color: var(--text2); }
+
+    .promo-btn {
+      background: linear-gradient(130deg, var(--violet), #6b3ff5);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(155,110,255,0.35);
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .promo-btn:hover { transform: scale(1.05); box-shadow: 0 6px 28px rgba(155,110,255,0.5); }
+
+    /* ─────────────────────────────────────────────
+       GAME SCREEN — SHARED LAYOUT
+    ───────────────────────────────────────────── */
+    .game-topbar {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(12,9,16,0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 99;
+    }
+
+    .back-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      color: var(--text2);
+      font-size: 17px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .back-btn:hover { border-color: var(--pink); color: var(--pink); }
+
+    .topbar-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .topbar-counter {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--surface2);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    /* Game content area */
+    .game-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 36px 24px 24px;
+      gap: 28px;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ─────────────────────────────────────────────
+       RESULT CARD  (shared across games)
+    ───────────────────────────────────────────── */
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 22px;
+      padding: 32px 36px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow);
+      animation: cardPop 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes cardPop {
+      from { opacity: 0; transform: scale(0.82) translateY(10px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .result-eyebrow {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .result-main {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--text);
+    }
+
+    /* ─────────────────────────────────────────────
+       BUTTONS
+    ───────────────────────────────────────────── */
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+    .btn-primary {
+      background: linear-gradient(130deg, var(--pink), #e84d8a);
+      color: white;
+      border: none;
+      padding: 14px 36px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.22s;
+      box-shadow: 0 4px 22px rgba(255,107,157,0.35);
+      letter-spacing: 0.3px;
+    }
+
+    .btn-primary:hover { transform: scale(1.05); box-shadow: 0 8px 32px rgba(255,107,157,0.55); }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text2);
+      border: 1px solid var(--border2);
+      padding: 13px 28px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+
+    /* ─────────────────────────────────────────────
+       DICE GAME
+    ───────────────────────────────────────────── */
+    .dice-scene {
+      perspective: 500px;
+      width: 140px;
+      height: 140px;
+      cursor: pointer;
+    }
+
+    .die-face {
+      width: 140px;
+      height: 140px;
+      background: linear-gradient(145deg, var(--surface2), var(--surface));
+      border: 2px solid var(--border2);
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      box-shadow:
+        0 12px 40px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      transition: transform 0.1s;
+      user-select: none;
+    }
+
+    .die-face.rolling {
+      animation: dieRoll 0.65s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    }
+
+    @keyframes dieRoll {
+      0%   { transform: rotateX(0deg)   rotateY(0deg)   scale(1); }
+      20%  { transform: rotateX(180deg) rotateY(90deg)  scale(0.88); }
+      50%  { transform: rotateX(360deg) rotateY(200deg) scale(1.08); }
+      80%  { transform: rotateX(260deg) rotateY(300deg) scale(0.94); }
+      100% { transform: rotateX(360deg) rotateY(360deg) scale(1); }
+    }
+
+    .dice-hint {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ─────────────────────────────────────────────
+       WHEEL GAME
+    ───────────────────────────────────────────── */
+    .wheel-scene {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      filter: drop-shadow(0 2px 8px rgba(255,107,157,0.7));
+    }
+
+    #wheelCanvas {
+      border-radius: 50%;
+      box-shadow:
+        0 0 0 4px var(--border2),
+        0 0 60px rgba(255,107,157,0.15),
+        var(--shadow);
+      display: block;
+    }
+
+    /* ─────────────────────────────────────────────
+       TRUTH OR DARE
+    ───────────────────────────────────────────── */
+    .tod-prompt {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      color: var(--text2);
+      text-align: center;
+      font-style: italic;
+    }
+
+    .tod-decks {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .tod-deck {
+      width: 150px;
+      height: 210px;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.28s cubic-bezier(0.34,1.4,0.64,1);
+      border: 2px solid;
+      gap: 14px;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tod-deck::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08), transparent 60%);
+    }
+
+    .tod-deck.truth-deck {
+      background: linear-gradient(160deg, #151f42, #0c1328);
+      border-color: #4060d8;
+      box-shadow: 0 6px 30px rgba(64,96,216,0.2);
+    }
+
+    .tod-deck.dare-deck {
+      background: linear-gradient(160deg, #38101a, #200812);
+      border-color: var(--pink);
+      box-shadow: 0 6px 30px rgba(255,107,157,0.2);
+    }
+
+    .tod-deck:hover { transform: translateY(-10px) scale(1.05); }
+    .tod-deck:active { transform: translateY(-4px) scale(1.02); }
+
+    .tod-deck-icon { font-size: 46px; line-height: 1; }
+
+    .tod-deck-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .truth-deck .tod-deck-label { color: #7090ff; }
+    .dare-deck  .tod-deck-label { color: var(--pink); }
+
+    .result-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 30px;
+      margin-bottom: 14px;
+    }
+
+    .badge-truth { background: rgba(112,144,255,0.15); color: #7090ff; border: 1px solid rgba(112,144,255,0.3); }
+    .badge-dare  { background: rgba(255,107,157,0.15); color: var(--pink); border: 1px solid rgba(255,107,157,0.3); }
+
+    /* ─────────────────────────────────────────────
+       KAMA SUTRA CARDS
+    ───────────────────────────────────────────── */
+    .ks-perspective {
+      perspective: 1000px;
+      width: 280px;
+      height: 370px;
+      cursor: pointer;
+    }
+
+    .ks-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    .ks-inner.flipped { transform: rotateY(180deg); }
+
+    .ks-side {
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .ks-front-side {
+      background: linear-gradient(160deg, #28103a, #160920);
+      border: 2px solid #6b3090;
+    }
+
+    .ks-front-side::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(155,110,255,0.12), transparent 65%);
+      border-radius: 22px;
+    }
+
+    .ks-back-side {
+      background: var(--surface);
+      border: 2px solid var(--border2);
+      transform: rotateY(180deg);
+    }
+
+    .ks-tap-hint {
+      font-size: 13px;
+      color: rgba(192,174,212,0.5);
+      margin-top: 12px;
+      letter-spacing: 1px;
+    }
+
+    .ks-card-emoji { font-size: 52px; line-height: 1; margin-bottom: 14px; }
+
+    .ks-card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(130deg, var(--text), var(--text2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .ks-card-desc {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .ks-card-num {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 16px;
+      letter-spacing: 1px;
+    }
+
+    /* ─────────────────────────────────────────────
+       SEXY TIMER
+    ───────────────────────────────────────────── */
+    .timer-ring-wrap {
+      position: relative;
+      width: 220px;
+      height: 220px;
+    }
+
+    .timer-ring-svg {
+      position: absolute;
+      inset: 0;
+      transform: rotate(-90deg);
+    }
+
+    .timer-ring-bg { fill: none; stroke: var(--surface2); stroke-width: 8; }
+    .timer-ring-fill { fill: none; stroke: url(#timerGrad); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+
+    .timer-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timer-digits {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px;
+      font-weight: 300;
+      letter-spacing: -2px;
+      line-height: 1;
+      background: linear-gradient(130deg, var(--text), var(--text2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .timer-digits.running {
+      background: linear-gradient(130deg, var(--pink), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .timer-task-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-style: italic;
+      color: var(--text2);
+      text-align: center;
+      min-height: 24px;
+    }
+
+    .timer-presets {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .preset-pill {
+      padding: 8px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .preset-pill:hover { border-color: var(--pink); color: var(--pink); }
+    .preset-pill.on    { background: var(--pink-dim); border-color: var(--pink); color: var(--pink); }
+
+    /* ─────────────────────────────────────────────
+       SPIN THE BOTTLE
+    ───────────────────────────────────────────── */
+    .bottle-scene {
+      width: 240px;
+      height: 240px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Decorative circles */
+    .bottle-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+    }
+
+    .bottle-ring-1 { inset: 0; }
+    .bottle-ring-2 { inset: 16px; border-color: var(--border2); opacity: 0.5; }
+
+    /* Player dots */
+    .player-dot {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 2px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .bottle-svg-wrap {
+      width: 90px;
+      height: 90px;
+      position: relative;
+      z-index: 5;
+      transition: transform 3.5s cubic-bezier(0.17, 0.67, 0.08, 0.99);
+      transform-origin: center;
+    }
+
+    .bottle-svg-wrap svg { width: 100%; height: 100%; }
+
+    /* ─────────────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────────────── */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 28px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .site-footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .site-footer a:hover { color: var(--pink); }
+
+    /* ─────────────────────────────────────────────
+       UTILITIES
+    ───────────────────────────────────────────── */
+    .hidden { display: none !important; }
+    .text-center { text-align: center; }
+
+    /* ─────────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .site-header { padding: 14px 18px; }
+      .logo { font-size: 26px; }
+      .hero { padding: 32px 18px 20px; }
+      .section-wrap { padding: 0 18px 36px; }
+      .games-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .game-card { padding: 18px 15px; }
+      .card-icon { font-size: 30px; margin-bottom: 10px; }
+      .card-name { font-size: 18px; }
+      .promo-strip { margin: 0 18px 32px; padding: 18px 20px; }
+      .tod-decks { gap: 14px; }
+      .tod-deck { width: 135px; height: 185px; }
+      .ks-perspective { width: 250px; height: 330px; }
+      .bottle-scene { width: 210px; height: 210px; }
+      .timer-ring-wrap { width: 190px; height: 190px; }
+      .timer-digits { font-size: 44px; }
+      .result-card { padding: 24px 20px; }
+    }
+
+    @media (max-width: 400px) {
+      .games-grid { grid-template-columns: 1fr 1fr; }
+      .card-name { font-size: 16px; }
+      .tod-deck { width: 120px; height: 165px; }
+      .tod-deck-icon { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════════════════════════════════
+       🏠  HOME SCREEN
+  ══════════════════════════════════════════════ -->
+  <div class="screen active" id="screen-home">
+
+    <header class="site-header">
+      <div>
+        <div class="logo" onclick="goHome()">Spicy<em>Play</em></div>
+        <div class="logo-tag">Couples Games</div>
+      </div>
+      <div class="header-badge">Free &amp; No Signup</div>
+    </header>
+
+    <!-- AD: Top Leaderboard ────────────────────── -->
+    <!-- ADSENSE: Replace the ad-slot div below with your AdSense leaderboard unit code -->
+    <div class="ad-wrap">
+      <div class="ad-slot ad-leaderboard">
+        <span class="ad-label">Advertisement</span>
+        <span class="ad-size">728 × 90</span>
+      </div>
+    </div>
+
+    <div class="hero">
+      <h1 class="hero-title">Games to <em>ignite</em><br>your spark 🔥</h1>
+      <p class="hero-sub">Fun, playful couple games for any mood. Pick a game below — no account, no fuss, just play.</p>
+    </div>
+
+    <div class="section-wrap">
+      <div class="section-label">Choose your game</div>
+      <div class="games-grid" id="gamesGrid">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- Affiliate / Premium Promo Strip ─────────── -->
+    <div class="promo-strip" style="max-width:860px;margin:0 auto 36px;width:calc(100% - 56px);">
+      <div class="promo-text">
+        <h3>✨ Want 500+ extra dares &amp; positions?</h3>
+        <p>Unlock the full premium pack — curated by our naughtiest community.</p>
+      </div>
+      <!-- Replace href with your Gumroad / Stripe / affiliate link -->
+      <a href="#" class="promo-btn">Get Premium →</a>
+    </div>
+
+    <!-- AD: Mid-page Rectangle ─────────────────── -->
+    <!-- ADSENSE: Replace the ad-slot div below with your AdSense rectangle unit code -->
+    <div class="ad-wrap">
+      <div class="ad-slot ad-leaderboard">
+        <span class="ad-label">Advertisement</span>
+        <span class="ad-size">728 × 90</span>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>SpicyPlay &copy; 2025 &nbsp;·&nbsp; <a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Contact</a></p>
+      <p style="margin-top:6px;font-size:11px;opacity:0.6;">For adults 18+ only &nbsp;·&nbsp; All games are for entertainment &amp; couples' fun only</p>
+    </footer>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       🎲  SEXY DICE
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-dice">
+    <header class="site-header">
+      <button class="back-btn" onclick="goHome()" title="Back to games">←</button>
+      <div class="topbar-title">🎲 Sexy Dice</div>
+    </header>
+
+    <div class="game-body">
+      <p class="text-center" style="color:var(--muted);font-size:14px;">Roll the dice — do whatever it says!</p>
+
+      <div class="dice-scene" id="diceScene" onclick="rollDice()" title="Click to roll">
+        <div class="die-face" id="dieFace">🎲</div>
+      </div>
+
+      <div class="result-card hidden" id="diceResult">
+        <div class="result-eyebrow">Your Action</div>
+        <div class="result-main" id="diceResultText"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="diceRollBtn" onclick="rollDice()">Roll the Dice 🎲</button>
+        <button class="btn-ghost" onclick="goHome()">Other Games</button>
+      </div>
+    </div>
+
+    <!-- AD ─── -->
+    <div class="ad-wrap" style="padding-bottom:28px;">
+      <div class="ad-slot ad-rectangle">
+        <span class="ad-label">Advertisement</span><span class="ad-size">300 × 250</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       🎡  SPIN THE WHEEL
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-wheel">
+    <header class="site-header">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="topbar-title">🎡 Spin the Wheel</div>
+    </header>
+
+    <div class="game-body">
+      <div class="wheel-scene">
+        <svg class="wheel-pointer" width="22" height="28" viewBox="0 0 22 28">
+          <polygon points="11,2 20,22 11,17 2,22" fill="#ff6b9d" />
+        </svg>
+        <canvas id="wheelCanvas" width="300" height="300"></canvas>
+      </div>
+
+      <div class="result-card hidden" id="wheelResult">
+        <div class="result-eyebrow">The Wheel Says</div>
+        <div class="result-main" id="wheelResultText"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="spinBtn" onclick="spinWheel()">Spin! 🎡</button>
+        <button class="btn-ghost" onclick="goHome()">Other Games</button>
+      </div>
+    </div>
+
+    <div class="ad-wrap" style="padding-bottom:28px;">
+      <div class="ad-slot ad-rectangle">
+        <span class="ad-label">Advertisement</span><span class="ad-size">300 × 250</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       🃏  TRUTH OR DARE
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-tod">
+    <header class="site-header">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="topbar-title">🃏 Truth or Dare</div>
+      <div class="topbar-counter" id="todCounter">Round 1</div>
+    </header>
+
+    <div class="game-body">
+      <!-- Deck picker -->
+      <div id="todPicker">
+        <p class="tod-prompt">Choose your destiny...</p>
+        <div class="tod-decks" style="margin-top:24px;">
+          <div class="tod-deck truth-deck" onclick="drawCard('truth')">
+            <span class="tod-deck-icon">💬</span>
+            <span class="tod-deck-label">Truth</span>
+          </div>
+          <div class="tod-deck dare-deck" onclick="drawCard('dare')">
+            <span class="tod-deck-icon">🔥</span>
+            <span class="tod-deck-label">Dare</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div class="result-card hidden" id="todResult">
+        <div id="todBadge"></div>
+        <div class="result-main" id="todCardText"></div>
+      </div>
+
+      <!-- Actions (shown after draw) -->
+      <div class="btn-row hidden" id="todActions">
+        <button class="btn-primary" onclick="resetTOD()">Draw Again 🃏</button>
+        <button class="btn-ghost" onclick="goHome()">Other Games</button>
+      </div>
+    </div>
+
+    <div class="ad-wrap" style="padding-bottom:28px;">
+      <div class="ad-slot ad-rectangle">
+        <span class="ad-label">Advertisement</span><span class="ad-size">300 × 250</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       🌹  KAMA SUTRA CARDS
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-kama">
+    <header class="site-header">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="topbar-title">🌹 Kama Sutra Cards</div>
+      <div class="topbar-counter" id="ksCounter">Card 1 / 12</div>
+    </header>
+
+    <div class="game-body">
+      <p class="text-center" style="color:var(--muted);font-size:14px;">Tap the card to reveal · swipe through all cards</p>
+
+      <div class="ks-perspective" onclick="flipKamaCard()" title="Tap to flip">
+        <div class="ks-inner" id="ksInner">
+          <!-- Front (face-down) -->
+          <div class="ks-side ks-front-side">
+            <div style="font-size:52px;position:relative;z-index:1;">🌹</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:rgba(192,144,220,0.7);margin-top:14px;position:relative;z-index:1;">Tap to Reveal</div>
+            <div class="ks-tap-hint" style="position:relative;z-index:1;">✦ a new position awaits ✦</div>
+          </div>
+          <!-- Back (face-up) -->
+          <div class="ks-side ks-back-side">
+            <div class="ks-card-emoji" id="ksEmoji">🌸</div>
+            <div class="ks-card-name" id="ksName">The Lotus</div>
+            <div class="ks-card-desc" id="ksDesc">A deeply intimate, face-to-face connection that emphasises closeness and eye contact.</div>
+            <div class="ks-card-num" id="ksNum">1 / 12</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" onclick="nextKamaCard()">Next Card 🔀</button>
+        <button class="btn-ghost" onclick="goHome()">Other Games</button>
+      </div>
+    </div>
+
+    <div class="ad-wrap" style="padding-bottom:28px;">
+      <div class="ad-slot ad-rectangle">
+        <span class="ad-label">Advertisement</span><span class="ad-size">300 × 250</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       ⏱️  SEXY TIMER
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-timer">
+    <header class="site-header">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="topbar-title">⏱️ Sexy Timer</div>
+    </header>
+
+    <div class="game-body">
+      <!-- Circular ring timer -->
+      <div class="timer-ring-wrap">
+        <svg class="timer-ring-svg" viewBox="0 0 220 220">
+          <defs>
+            <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff6b9d"/>
+              <stop offset="100%" stop-color="#f5a05a"/>
+            </linearGradient>
+          </defs>
+          <circle class="timer-ring-bg" cx="110" cy="110" r="98"/>
+          <circle class="timer-ring-fill" id="timerRing" cx="110" cy="110" r="98"
+            stroke-dasharray="615.75" stroke-dashoffset="0"/>
+        </svg>
+        <div class="timer-center">
+          <div class="timer-digits" id="timerDigits">05:00</div>
+        </div>
+      </div>
+
+      <div class="timer-task-label" id="timerTaskLabel">5 minutes of foreplay</div>
+
+      <!-- Preset pills -->
+      <div class="timer-presets" id="timerPresets">
+        <button class="preset-pill" onclick="setTimerPreset(1,'1 minute massage',this)">1 min</button>
+        <button class="preset-pill" onclick="setTimerPreset(2,'2 minutes of kissing',this)">2 min</button>
+        <button class="preset-pill on" onclick="setTimerPreset(5,'5 minutes of foreplay',this)">5 min</button>
+        <button class="preset-pill" onclick="setTimerPreset(10,'10 minute challenge',this)">10 min</button>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="timerStartBtn" onclick="startTimer()">Start ▶</button>
+        <button class="btn-ghost hidden" id="timerResetBtn" onclick="resetTimer()">Reset ↺</button>
+        <button class="btn-ghost" onclick="goHome()">Other Games</button>
+      </div>
+    </div>
+
+    <div class="ad-wrap" style="padding-bottom:28px;">
+      <div class="ad-slot ad-rectangle">
+        <span class="ad-label">Advertisement</span><span class="ad-size">300 × 250</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       🍾  SPIN THE BOTTLE
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-bottle">
+    <header class="site-header">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="topbar-title">🍾 Spin the Bottle</div>
+    </header>
+
+    <div class="game-body">
+      <p class="text-center" style="color:var(--muted);font-size:14px;">Spin it — whoever it points to gets a kiss 💋</p>
+
+      <div class="bottle-scene">
+        <!-- Ring decorations -->
+        <div class="bottle-ring bottle-ring-1"></div>
+        <div class="bottle-ring bottle-ring-2"></div>
+
+        <!-- Player initials around the circle -->
+        <div class="player-dot" style="top:8px;left:50%;transform:translateX(-50%);">P1</div>
+        <div class="player-dot" style="bottom:8px;left:50%;transform:translateX(-50%);">P2</div>
+        <div class="player-dot" style="left:8px;top:50%;transform:translateY(-50%);">P3</div>
+        <div class="player-dot" style="right:8px;top:50%;transform:translateY(-50%);">P4</div>
+
+        <!-- Bottle SVG -->
+        <div class="bottle-svg-wrap" id="bottleWrap">
+          <svg viewBox="0 0 80 130" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#5ecb95"/>
+                <stop offset="100%" stop-color="#2d8060"/>
+              </linearGradient>
+              <linearGradient id="cGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#cc3333"/>
+                <stop offset="100%" stop-color="#991111"/>
+              </linearGradient>
+            </defs>
+            <!-- Body -->
+            <ellipse cx="40" cy="90" rx="26" ry="36" fill="url(#bGrad)" opacity="0.92"/>
+            <!-- Shoulder -->
+            <path d="M14,75 Q14,54 28,48 L28,38 L52,38 L52,48 Q66,54 66,75Z" fill="url(#bGrad)" opacity="0.88"/>
+            <!-- Neck -->
+            <rect x="30" y="18" width="20" height="22" rx="5" fill="url(#bGrad)" opacity="0.88"/>
+            <!-- Cap -->
+            <rect x="28" y="10" width="24" height="12" rx="4" fill="url(#cGrad)"/>
+            <!-- Shine -->
+            <ellipse cx="33" cy="78" rx="5" ry="22" fill="white" opacity="0.12"/>
+            <!-- Label -->
+            <rect x="20" y="80" width="40" height="26" rx="5" fill="rgba(255,255,255,0.07)"/>
+            <!-- Arrow tip (pointing "up" in local coords = this is 12 o'clock = P1) -->
+            <polygon points="40,2 45,12 35,12" fill="#ff6b9d" opacity="0.95"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="result-card hidden" id="bottleResult">
+        <div class="result-eyebrow">Time for a</div>
+        <div class="result-main">💋 Kiss!</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="bottleBtn" onclick="spinBottle()">Spin the Bottle 🍾</button>
+        <button class="btn-ghost" onclick="goHome()">Other Games</button>
+      </div>
+    </div>
+
+    <div class="ad-wrap" style="padding-bottom:28px;">
+      <div class="ad-slot ad-rectangle">
+        <span class="ad-label">Advertisement</span><span class="ad-size">300 × 250</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ══════════════════════════════════════════════════════════
+     JAVASCRIPT — All game logic (no external dependencies)
+═══════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ─────────────────────────────────────────────
+   DATA
+───────────────────────────────────────────── */
+const GAMES = [
+  { id:'dice',   icon:'🎲', name:'Sexy Dice',         desc:'Roll and follow a random romantic action',          color:'#ff6b9d' },
+  { id:'wheel',  icon:'🎡', name:'Spin the Wheel',    desc:'Let fate decide your next move — spin it!',         color:'#f5a05a' },
+  { id:'tod',    icon:'🃏', name:'Truth or Dare',     desc:'Answer honestly or accept the dare. No excuses!',   color:'#7090ff' },
+  { id:'kama',   icon:'🌹', name:'Kama Sutra Cards',  desc:'Draw a card and discover your next position',       color:'#c070d0' },
+  { id:'timer',  icon:'⏱️', name:'Sexy Timer',        desc:'Set a countdown for your favourite activity',       color:'#3dd9b3' },
+  { id:'bottle', icon:'🍾', name:'Spin the Bottle',   desc:'Spin it — whoever it lands on gets a kiss 💋',      color:'#f0a06a' },
+];
+
+const DICE_ACTIONS = [
+  "Give a 60-second neck massage 💆",
+  "Whisper 3 things you love about them ❤️",
+  "Kiss their cheek 5 times 😘",
+  "Give a forehead kiss — hold it for 5 seconds 🥰",
+  "Hold hands and slow dance to the next song 💃",
+  "Tell them your all-time favourite memory of you two 🌟",
+  "Hold them in a bear hug for 30 full seconds 🤗",
+  "Look into each other's eyes silently for 20 seconds 👀",
+  "Feed each other something sweet without utensils 🍓",
+  "Give a 2-minute hand and wrist massage ✋",
+  "Trace a heart on their back — they have to guess the shape 💕",
+  "Let them control the music for the next 15 minutes 🎵",
+  "Write a tiny love note and hand it to them 📝",
+  "Compliment something specific they did this week 🌻",
+  "Recreate your first moment together for 2 minutes 📅",
+  "Stare and smile — first one to laugh takes the next dare 😄",
+  "Give an Eskimo kiss — noses only 👃",
+  "Make their favourite hot drink and bring it to them ☕",
+  "Describe exactly what you love most about their personality 💡",
+  "Sit back-to-back and share one wish for your relationship 🌠",
+  "Give a 3-minute scalp massage 🫶",
+  "Take a silly photo together right now 📸",
+  "Slow walk around the room holding hands — no phones 🚶‍♀️",
+  "Tell them what you were thinking the first time you saw them 💭",
+  "Pick a random song and sway together 🎶",
+];
+
+const WHEEL_OPTIONS = [
+  'Back Massage', 'Sweet Kiss', 'Dance Together',
+  'Forehead Kiss', 'Bear Hug', 'Whisper a Compliment',
+  'Foot Rub',     'Truth Question',
+];
+const WHEEL_COLORS = ['#ff6b9d','#f5a05a','#7090ff','#c070d0','#3dd9b3','#ff9f50','#6b9dff','#d06090'];
+
+const TRUTHS = [
+  "What's the most romantic thing you've ever done for someone?",
+  "When did you first know you had real feelings for me?",
+  "What's your all-time favourite memory of us?",
+  "Which song reminds you most of our relationship?",
+  "What's one thing you wish we did more of together?",
+  "Describe me using only 3 adjectives — go!",
+  "What was your honest first impression of me?",
+  "What's something I do that you secretly adore?",
+  "What's a dream date you'd want us to go on?",
+  "Where in the world would you most love to take me?",
+  "What's something you admire about how I handle life?",
+  "If you could relive one day of our relationship, which would it be?",
+  "What's the best surprise you've ever received from me?",
+  "What's something you've always wanted to tell me but haven't?",
+  "What's one habit of mine that you secretly love?",
+  "What's the funniest moment we've shared together?",
+  "If you had to describe our relationship in one movie title, what would it be?",
+  "What's the one thing I could do to make tomorrow extra special for you?",
+];
+
+const DARES = [
+  "Give your partner a 3-minute shoulder massage right now 💆",
+  "Serenade them with 30 seconds of any song — no skipping 🎤",
+  "Slow dance with them through the entire next song 🕺",
+  "Recreate a romantic movie scene they choose 🎬",
+  "Speak only in compliments for the next 3 minutes 💬",
+  "Do your best impression of them — no holding back 😂",
+  "Let them style your hair however they want 💇",
+  "Give a 3-minute foot massage 🦶",
+  "Make up a 30-second rap about your partner and perform it ✨",
+  "Tell them 5 things you love about them — in under 30 seconds ⏱️",
+  "Write 'I love you' on their arm using only your fingertip ✍️",
+  "Take the funniest selfie possible together right now 📸",
+  "Feed them their favourite snack without using your hands 🍓",
+  "Give them a piggyback ride across the room 🐎",
+  "Reenact how you first met — in full dramatic fashion 🎭",
+  "Close your eyes and draw their portrait — no peeking 🎨",
+  "Let them pick any question from the Truth deck for you to answer honestly 💡",
+  "Do 10 push-ups — your partner sits on your back 💪",
+];
+
+const KAMA_CARDS = [
+  { emoji:'🌸', name:'The Lotus',       desc:'A deeply intimate face-to-face connection that emphasises closeness and sustained eye contact.' },
+  { emoji:'🦋', name:'The Butterfly',   desc:'A gentle, relaxed position perfect for tenderness, slow rhythm, and meaningful connection.' },
+  { emoji:'🌙', name:'The Crescent',    desc:'Side-by-side and serene — ideal for slow, romantic moments and late-night pillow talk.' },
+  { emoji:'🔥', name:'The Flame',       desc:'Passionate and energetic — this position turns up the heat and requires real chemistry.' },
+  { emoji:'🌊', name:'Ocean Wave',      desc:'A flowing, rhythmic position that feels natural and deeply satisfying for both partners.' },
+  { emoji:'🌺', name:'The Blossom',     desc:'Opens up vulnerability and trust — ideal for deepening emotional and physical intimacy.' },
+  { emoji:'✨', name:'Stargazer',        desc:'Lie back and gaze upward — dreamy, romantic, and surprisingly connected.' },
+  { emoji:'🌿', name:'Entwined Vines',  desc:'Wrap around each other for maximum body contact, warmth, and that feeling of being completely together.' },
+  { emoji:'🦚', name:'The Peacock',     desc:'A showstopper — playful and adventurous, this one requires trust and coordination.' },
+  { emoji:'💫', name:'Spiral Dance',    desc:'Smooth circular movements that create a hypnotic, intimate rhythm you can both feel.' },
+  { emoji:'🐚', name:'The Shell',       desc:'Curled and protected — a nurturing position full of warmth, safety, and deep care.' },
+  { emoji:'🌹', name:'The Rose',        desc:'Classic, timeless, and deeply romantic. Every good game should end here.' },
+];
+
+/* ─────────────────────────────────────────────
+   SCREEN ROUTING
+───────────────────────────────────────────── */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.animation = 'none';
+  });
+  const el = document.getElementById('screen-' + id);
+  if (!el) return;
+  // Remove and re-add to restart animation
+  el.style.animation = 'none';
+  el.classList.add('active');
+  void el.offsetWidth; // reflow
+  el.style.animation = '';
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+function goHome() { showScreen('home'); }
+
+function openGame(id) {
+  showScreen(id);
+  if (id === 'wheel')  initWheel();
+  if (id === 'kama')   initKama();
+  if (id === 'timer')  initTimer();
+  if (id === 'bottle') initBottle();
+  if (id === 'dice')   initDice();
+  if (id === 'tod')    initTOD();
+}
+
+/* ─────────────────────────────────────────────
+   HOME — render game cards
+───────────────────────────────────────────── */
+function renderHome() {
+  const grid = document.getElementById('gamesGrid');
+  grid.innerHTML = GAMES.map(g => `
+    <div class="game-card" style="--card-accent:${g.color}" onclick="openGame('${g.id}')">
+      <span class="card-icon">${g.icon}</span>
+      <div class="card-name">${g.name}</div>
+      <div class="card-desc">${g.desc}</div>
+      <div class="card-cta" style="color:${g.color}">
+        Play Now
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="2" y1="8" x2="14" y2="8"/><polyline points="9,3 14,8 9,13"/>
+        </svg>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ─────────────────────────────────────────────
+   🎲  DICE GAME
+───────────────────────────────────────────── */
+function initDice() {
+  document.getElementById('dieFace').textContent = '🎲';
+  document.getElementById('diceResult').classList.add('hidden');
+}
+
+const DICE_FACES = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+let diceRolling = false;
+
+function rollDice() {
+  if (diceRolling) return;
+  diceRolling = true;
+
+  const face = document.getElementById('dieFace');
+  const result = document.getElementById('diceResult');
+  const btn = document.getElementById('diceRollBtn');
+
+  btn.disabled = true;
+  result.classList.add('hidden');
+
+  // Quick flicker animation
+  face.classList.remove('rolling');
+  void face.offsetWidth;
+  face.classList.add('rolling');
+
+  let flickers = 0;
+  const flicker = setInterval(() => {
+    face.textContent = DICE_FACES[Math.floor(Math.random() * 6)];
+    if (++flickers >= 6) clearInterval(flicker);
+  }, 80);
+
+  setTimeout(() => {
+    const text = DICE_ACTIONS[Math.floor(Math.random() * DICE_ACTIONS.length)];
+    document.getElementById('diceResultText').textContent = text;
+    result.classList.remove('hidden');
+    diceRolling = false;
+    btn.disabled = false;
+  }, 700);
+}
+
+/* ─────────────────────────────────────────────
+   🎡  WHEEL GAME
+───────────────────────────────────────────── */
+let wheelAngle = 0;
+let wheelSpinning = false;
+
+function initWheel() {
+  document.getElementById('wheelResult').classList.add('hidden');
+  document.getElementById('spinBtn').disabled = false;
+  drawWheel(wheelAngle);
+}
+
+function drawWheel(rotation) {
+  const canvas = document.getElementById('wheelCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx = 150, cy = 150, r = 142;
+  const n = WHEEL_OPTIONS.length;
+  const arc = (Math.PI * 2) / n;
+
+  ctx.clearRect(0, 0, 300, 300);
+
+  for (let i = 0; i < n; i++) {
+    const start = rotation + i * arc;
+    const end   = start + arc;
+
+    // Segment fill
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.closePath();
+    ctx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length];
+    ctx.fill();
+
+    // Segment border
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Label
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + arc / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.font = '600 12.5px "DM Sans", sans-serif';
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur = 6;
+    ctx.fillText(WHEEL_OPTIONS[i], r - 14, 5);
+    ctx.restore();
+  }
+
+  // Outer rim
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // Center cap
+  ctx.beginPath();
+  ctx.arc(cx, cy, 20, 0, Math.PI * 2);
+  ctx.fillStyle = '#0c0910';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,107,157,0.5)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Center dot
+  ctx.beginPath();
+  ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+  ctx.fillStyle = '#ff6b9d';
+  ctx.fill();
+}
+
+function spinWheel() {
+  if (wheelSpinning) return;
+  wheelSpinning = true;
+
+  const btn = document.getElementById('spinBtn');
+  btn.disabled = true;
+  document.getElementById('wheelResult').classList.add('hidden');
+
+  const totalAngle = (5 + Math.random() * 5) * Math.PI * 2 + Math.random() * Math.PI * 2;
+  const duration   = 4200;
+  const startAngle = wheelAngle;
+  const startTime  = performance.now();
+
+  function animate(now) {
+    const elapsed  = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // Ease out quart
+    const ease     = 1 - Math.pow(1 - progress, 4);
+
+    wheelAngle = startAngle + totalAngle * ease;
+    drawWheel(wheelAngle);
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      wheelSpinning = false;
+      btn.disabled  = false;
+
+      // Pointer sits at top = canvas angle -π/2
+      const n    = WHEEL_OPTIONS.length;
+      const arc  = (Math.PI * 2) / n;
+      const norm = ((-Math.PI / 2 - wheelAngle) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+      const idx  = Math.floor(norm / arc) % n;
+
+      const resultEl = document.getElementById('wheelResult');
+      document.getElementById('wheelResultText').textContent = WHEEL_OPTIONS[idx];
+      resultEl.classList.remove('hidden');
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+/* ─────────────────────────────────────────────
+   🃏  TRUTH OR DARE
+───────────────────────────────────────────── */
+let todRound = 0;
+
+function initTOD() {
+  todRound = 0;
+  resetTOD();
+}
+
+function drawCard(type) {
+  todRound++;
+  document.getElementById('todCounter').textContent = 'Round ' + todRound;
+
+  const items = type === 'truth' ? TRUTHS : DARES;
+  const text  = items[Math.floor(Math.random() * items.length)];
+
+  const badge = document.getElementById('todBadge');
+  badge.className = 'result-badge ' + (type === 'truth' ? 'badge-truth' : 'badge-dare');
+  badge.textContent = type === 'truth' ? '💬 Truth' : '🔥 Dare';
+
+  document.getElementById('todCardText').textContent = text;
+
+  // Show result, hide picker
+  document.getElementById('todPicker').classList.add('hidden');
+  document.getElementById('todResult').classList.remove('hidden');
+  document.getElementById('todActions').classList.remove('hidden');
+}
+
+function resetTOD() {
+  document.getElementById('todPicker').classList.remove('hidden');
+  document.getElementById('todResult').classList.add('hidden');
+  document.getElementById('todActions').classList.add('hidden');
+}
+
+/* ─────────────────────────────────────────────
+   🌹  KAMA SUTRA CARDS
+───────────────────────────────────────────── */
+let ksIndex   = 0;
+let ksFlipped = false;
+
+function initKama() {
+  ksIndex   = 0;
+  ksFlipped = false;
+  document.getElementById('ksInner').classList.remove('flipped');
+  renderKsCard();
+}
+
+function renderKsCard() {
+  const card = KAMA_CARDS[ksIndex];
+  document.getElementById('ksEmoji').textContent = card.emoji;
+  document.getElementById('ksName').textContent  = card.name;
+  document.getElementById('ksDesc').textContent  = card.desc;
+  document.getElementById('ksNum').textContent   = (ksIndex + 1) + ' / ' + KAMA_CARDS.length;
+  document.getElementById('ksCounter').textContent = 'Card ' + (ksIndex + 1) + ' / ' + KAMA_CARDS.length;
+}
+
+function flipKamaCard() {
+  ksFlipped = !ksFlipped;
+  document.getElementById('ksInner').classList.toggle('flipped', ksFlipped);
+}
+
+function nextKamaCard() {
+  ksIndex   = (ksIndex + 1) % KAMA_CARDS.length;
+  ksFlipped = false;
+  document.getElementById('ksInner').classList.remove('flipped');
+  setTimeout(renderKsCard, 50);
+}
+
+/* ─────────────────────────────────────────────
+   ⏱️  SEXY TIMER
+───────────────────────────────────────────── */
+let timerTotal     = 300;
+let timerRemaining = 300;
+let timerInterval  = null;
+let timerActive    = false;
+
+const CIRCUMFERENCE = 2 * Math.PI * 98; // ≈ 615.75
+
+function initTimer() {
+  timerTotal     = 300;
+  timerRemaining = 300;
+  timerActive    = false;
+  clearInterval(timerInterval);
+  updateTimerUI();
+  document.getElementById('timerStartBtn').classList.remove('hidden');
+  document.getElementById('timerResetBtn').classList.add('hidden');
+  document.getElementById('timerDigits').classList.remove('running');
+  document.getElementById('timerTaskLabel').textContent = '5 minutes of foreplay';
+  // Reset ring
+  document.getElementById('timerRing').style.strokeDashoffset = '0';
+  // Set 5-min pill as active
+  document.querySelectorAll('.preset-pill').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.preset-pill')[2].classList.add('on'); // 5 min
+}
+
+function setTimerPreset(minutes, label, btn) {
+  if (timerActive) return;
+  timerTotal     = minutes * 60;
+  timerRemaining = timerTotal;
+  document.getElementById('timerTaskLabel').textContent = label.charAt(0).toUpperCase() + label.slice(1);
+  updateTimerUI();
+  document.querySelectorAll('.preset-pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function updateTimerUI() {
+  const m = String(Math.floor(timerRemaining / 60)).padStart(2, '0');
+  const s = String(timerRemaining % 60).padStart(2, '0');
+  document.getElementById('timerDigits').textContent = m + ':' + s;
+
+  // Ring progress
+  const fraction = timerTotal > 0 ? timerRemaining / timerTotal : 1;
+  const offset   = CIRCUMFERENCE * (1 - fraction);
+  document.getElementById('timerRing').style.strokeDashoffset = offset;
+}
+
+function startTimer() {
+  if (timerActive) return;
+  timerActive = true;
+  document.getElementById('timerStartBtn').classList.add('hidden');
+  document.getElementById('timerResetBtn').classList.remove('hidden');
+  document.getElementById('timerDigits').classList.add('running');
+  document.querySelectorAll('.preset-pill').forEach(p => p.style.pointerEvents = 'none');
+
+  timerInterval = setInterval(() => {
+    if (timerRemaining <= 0) {
+      clearInterval(timerInterval);
+      timerActive = false;
+      document.getElementById('timerDigits').textContent = "Time's Up! 🎉";
+      document.getElementById('timerTaskLabel').textContent = '';
+      document.getElementById('timerRing').style.strokeDashoffset = CIRCUMFERENCE;
+      if ('vibrate' in navigator) navigator.vibrate([200, 100, 200, 100, 400]);
+      return;
+    }
+    timerRemaining--;
+    updateTimerUI();
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerActive    = false;
+  timerRemaining = timerTotal;
+  updateTimerUI();
+  document.getElementById('timerDigits').classList.remove('running');
+  document.getElementById('timerStartBtn').classList.remove('hidden');
+  document.getElementById('timerResetBtn').classList.add('hidden');
+  document.querySelectorAll('.preset-pill').forEach(p => p.style.pointerEvents = '');
+}
+
+/* ─────────────────────────────────────────────
+   🍾  SPIN THE BOTTLE
+───────────────────────────────────────────── */
+let bottleDeg      = 0;
+let bottleSpinning = false;
+
+function initBottle() {
+  document.getElementById('bottleResult').classList.add('hidden');
+  document.getElementById('bottleBtn').disabled = false;
+  document.getElementById('bottleWrap').style.transition = 'none';
+  document.getElementById('bottleWrap').style.transform  = `rotate(${bottleDeg}deg)`;
+}
+
+function spinBottle() {
+  if (bottleSpinning) return;
+  bottleSpinning = true;
+
+  const btn  = document.getElementById('bottleBtn');
+  const wrap = document.getElementById('bottleWrap');
+  btn.disabled = true;
+  document.getElementById('bottleResult').classList.add('hidden');
+
+  const spins      = 4 + Math.random() * 6;
+  const extra      = Math.random() * 360;
+  const totalDeg   = spins * 360 + extra;
+
+  wrap.style.transition = `transform ${3 + Math.random()}s cubic-bezier(0.17, 0.67, 0.06, 0.99)`;
+  bottleDeg += totalDeg;
+  wrap.style.transform = `rotate(${bottleDeg}deg)`;
+
+  setTimeout(() => {
+    bottleSpinning = false;
+    btn.disabled   = false;
+    document.getElementById('bottleResult').classList.remove('hidden');
+  }, 4200);
+}
+
+/* ─────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────── */
+renderHome();
+</script>
+</body>
+</html>
